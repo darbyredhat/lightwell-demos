@@ -43,8 +43,6 @@ docs/    setup and architecture
 
 A new demo is a new `demos/NN-name/` folder plus a row in the table above.
 
-## Credits and license
+## Credits
 
 The demo app, the GitHub plugin, and the Xray sync tool are based on Anurag Saran's work; see [CREDITS.md](CREDITS.md).
-
-This repo has no license.
