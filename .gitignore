@@ -1,0 +1,65 @@
+# Build output and OS files
+target/
+*.log
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+.DS_Store
+.vscode/
+.idea/
+*.iml
+
+# Secrets: credentials come from environment variables only
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.jks
+.netrc
+settings-security.xml
+*.token
+secrets/
+
+# AI-assisted development tools
+## Claude Code
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+## OpenAI Codex
+.codex/
+AGENTS.md
+## Cursor
+.cursor/
+.cursorrules
+.cursorignore
+.cursorindexingignore
+## GitHub Copilot
+.github/copilot-instructions.md
+.github/instructions/
+.github/prompts/
+## Google Gemini
+.gemini/
+GEMINI.md
+## Windsurf
+.windsurf/
+.windsurfrules
+## Aider
+.aider*
+## Cline and Roo Code
+.clinerules
+.clinerules/
+.roo/
+.roomodes
+## Continue
+.continue/
+## Amazon Q
+.amazonq/
+## Kiro
+.kiro/
+## Junie (JetBrains)
+.junie/
+## Zed and other assistants
+.zed/
+.ai/

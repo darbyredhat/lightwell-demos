@@ -1,0 +1,251 @@
+name: Lightwell Remediate
+
+# Runs in the plugin repo and opens PRs on the target app repo.
+# Based on Anurag Saran's lightwell-github-plugin-demo (see CREDITS.md in lightwell-demos).
+# OWNER is replaced with the presenter's GitHub account by demos/03-github-plugin/create-demo-repos.sh.
+# Badge updates go to the bot-owned lightwell/badge branch (never main).
+# Remediation commits use --force-with-lease on lightwell/remediations.
+on:
+  workflow_dispatch:
+    inputs:
+      target_repo:
+        description: App repo to remediate (owner/name).
+        required: true
+        default: OWNER/lightwell-demo-payments-service
+        type: choice
+        options:
+          - OWNER/lightwell-demo-payments-service
+      dry_run:
+        description: Scan and summarize only (no push/PR)
+        required: false
+        default: false
+        type: boolean
+  # No schedule or push triggers: runs only when started manually.
+
+permissions:
+  contents: read
+
+jobs:
+  select-targets:
+    name: Select target repos
+    runs-on: ubuntu-latest
+    outputs:
+      targets: ${{ steps.set.outputs.targets }}
+    steps:
+      - id: set
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SELECTED: ${{ inputs.target_repo }}
+        run: |
+          set -euo pipefail
+          ALL='["OWNER/lightwell-demo-payments-service"]'
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ -n "${SELECTED:-}" ]; then
+            # JSON-encode the single selected repo
+            echo "targets=$(python3 -c 'import json,os; print(json.dumps([os.environ["SELECTED"]]))')" >> "$GITHUB_OUTPUT"
+          else
+            echo "targets=$ALL" >> "$GITHUB_OUTPUT"
+          fi
+
+  remediate:
+    name: Remediate ${{ matrix.target_repo }}
+    needs: select-targets
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target_repo: ${{ fromJSON(needs.select-targets.outputs.targets) }}
+    concurrency:
+      group: lightwell-remediate-${{ matrix.target_repo }}
+      cancel-in-progress: true
+    env:
+      TARGET_REPO: ${{ matrix.target_repo }}
+      DRY_RUN: ${{ inputs.dry_run || false }}
+      # Fine-grained PAT: Contents + Pull requests on the target app repo.
+      GH_TOKEN: ${{ secrets.LIGHTWELL_REPO_TOKEN }}
+    steps:
+      - name: Require LIGHTWELL_REPO_TOKEN
+        run: |
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "::error::Set repository secret LIGHTWELL_REPO_TOKEN (fine-grained PAT: Contents + Pull requests on the target app repo)."
+            exit 1
+          fi
+
+      - name: Validate target_repo
+        run: |
+          if ! [[ "$TARGET_REPO" =~ ^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$ ]]; then
+            echo "::error::target_repo must be owner/name (got: $TARGET_REPO)"
+            exit 1
+          fi
+
+      - name: Checkout Lightwell plugin
+        uses: actions/checkout@v4
+        with:
+          path: _lightwell
+
+      - name: Checkout target app
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.TARGET_REPO }}
+          token: ${{ secrets.LIGHTWELL_REPO_TOKEN }}
+          path: _app
+
+      - name: Configure git auth via gh
+        run: |
+          gh auth setup-git
+          git config --global user.name "lightwell-bot"
+          git config --global user.email "lightwell-bot@users.noreply.github.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Scan target pom.xml files
+        id: scan
+        working-directory: _app
+        run: |
+          PLUGIN="../_lightwell/lightwell-github"
+          python3 "$PLUGIN/scan_poms.py" \
+            --root . \
+            --catalog "$PLUGIN/catalog.json" \
+            --out-dir /tmp/lightwell-out
+          MATCH_COUNT=$(python3 -c "import json; print(len(json.load(open('/tmp/lightwell-out/matches.json'))['matches']))")
+          echo "match_count=$MATCH_COUNT" >> "$GITHUB_OUTPUT"
+          cat /tmp/lightwell-out/report.md >> "$GITHUB_STEP_SUMMARY"
+          echo "Target: $TARGET_REPO" >> "$GITHUB_STEP_SUMMARY"
+          echo "Available library updates: $MATCH_COUNT" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Dry-run summary
+        if: env.DRY_RUN == 'true'
+        run: |
+          echo "Dry run: skipping badge push and remediation PR."
+          echo "Matches: ${{ steps.scan.outputs.match_count }}"
+
+      - name: Publish available-updates badge on lightwell/badge
+        if: env.DRY_RUN != 'true'
+        working-directory: _app
+        run: |
+          set -euo pipefail
+          PLUGIN="../_lightwell/lightwell-github"
+          BRANCH="lightwell/badge"
+
+          python3 "$PLUGIN/write_badge.py" \
+            --matches /tmp/lightwell-out/matches.json \
+            --out lightwell-badge.json
+
+          git fetch origin main
+          git fetch origin "$BRANCH" || true
+          git switch main
+          git pull --ff-only origin main
+          git switch -C "$BRANCH"
+
+          python3 "$PLUGIN/write_badge.py" \
+            --matches /tmp/lightwell-out/matches.json \
+            --out lightwell-badge.json
+
+          git add lightwell-badge.json
+          if git diff --cached --quiet; then
+            echo "Badge already up to date on $BRANCH."
+          else
+            git commit -m "chore(lightwell): refresh available library updates badge"
+            if ! git push -u origin "$BRANCH" --force-with-lease; then
+              echo "force-with-lease rejected; retrying after re-fetch of $BRANCH"
+              git fetch origin "$BRANCH"
+              git push -u origin "$BRANCH" --force-with-lease
+            fi
+            echo "Published lightwell-badge.json to $BRANCH (${{ steps.scan.outputs.match_count }} available)."
+          fi
+          echo "Point shields.io at raw.githubusercontent.com/<owner>/<repo>/lightwell/badge/lightwell-badge.json"
+
+      - name: No matches
+        if: env.DRY_RUN != 'true' && steps.scan.outputs.match_count == '0'
+        run: echo "No Lightwell remediations available for $TARGET_REPO."
+
+      - name: Apply bumps and open or update PR on target
+        if: env.DRY_RUN != 'true' && steps.scan.outputs.match_count != '0'
+        working-directory: _app
+        run: |
+          set -euo pipefail
+
+          PLUGIN="../_lightwell/lightwell-github"
+          BRANCH="lightwell/remediations"
+
+          TITLE=$(python3 - <<'PY'
+          import json
+          matches = json.load(open("/tmp/lightwell-out/matches.json"))["matches"]
+          if len(matches) == 1:
+              m = matches[0]
+              print(f"chore(deps): remediate {m['artifactId']} to {m['toVersion']} (Lightwell)")
+          else:
+              print(f"chore(deps): remediate {len(matches)} dependencies to Lightwell builds")
+          PY
+          )
+
+          {
+            echo "## Summary"
+            echo
+            echo "Lightwell found **${{ steps.scan.outputs.match_count }}** matching library update(s) and opened this PR automatically."
+            echo
+            echo "Opened by plugin: https://github.com/OWNER/lightwell-demo-plugin"
+            echo
+            echo "Branch \`lightwell/remediations\` is owned by the Lightwell bot (pushed with \`--force-with-lease\`)."
+            echo
+            echo "Bumps below include **CVEs fixed** and **CVSS** from Lightwell OSV (sorted by highest severity)."
+            echo
+            echo "**Merge** to accept the update, or **close** to reject it."
+            echo
+            cat /tmp/lightwell-out/report.md
+            echo
+            echo "## Test plan"
+            echo
+            echo "- [ ] Review pom.xml version bumps and CVE/CVSS table"
+            echo "- [ ] Run \`mvn -q test\` (or project build)"
+            echo "- [ ] Confirm Lightwell artifacts resolve in CI"
+          } > /tmp/pr-body.md
+
+          git fetch origin main
+          # Refresh remote tip so --force-with-lease has current lease info
+          # (stale remediations branch after a closed PR otherwise rejects the push).
+          git fetch origin "$BRANCH" || true
+          git switch main
+          git pull --ff-only origin main
+          git switch -C "$BRANCH"
+
+          python3 "$PLUGIN/apply_bumps.py" --root . --matches /tmp/lightwell-out/matches.json
+
+          mapfile -t POMS < <(python3 -c 'import json; print("\n".join(m["pom"] for m in json.load(open("/tmp/lightwell-out/matches.json"))["matches"]))')
+
+          git add "${POMS[@]}"
+          if git diff --cached --quiet; then
+            echo "No pom changes to commit."
+            exit 0
+          fi
+
+          git commit -m "$TITLE"
+          if ! git push -u origin "$BRANCH" --force-with-lease; then
+            echo "force-with-lease rejected; retrying after re-fetch of $BRANCH"
+            git fetch origin "$BRANCH"
+            git push -u origin "$BRANCH" --force-with-lease
+          fi
+
+          EXISTING_PR=$(gh pr list --repo "$TARGET_REPO" --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
+          gh label create lightwell --repo "$TARGET_REPO" --description "Lightwell remediation proposals" --color "0E4429" 2>/dev/null || true
+          if [ -n "$EXISTING_PR" ]; then
+            gh pr edit "$EXISTING_PR" --repo "$TARGET_REPO" --title "$TITLE" --body-file /tmp/pr-body.md --add-label lightwell
+            PR_URL=$(gh pr view "$EXISTING_PR" --repo "$TARGET_REPO" --json url --jq .url)
+            echo "Updated PR: $PR_URL"
+          else
+            PR_URL=$(gh pr create --repo "$TARGET_REPO" --title "$TITLE" --body-file /tmp/pr-body.md --base main --head "$BRANCH" --label lightwell)
+            echo "Opened PR: $PR_URL"
+          fi
+
+          {
+            echo
+            echo "### Lightwell remediation PR"
+            echo
+            echo "Opened or updated on \`$TARGET_REPO\`: $PR_URL"
+            echo
+            echo "Available library updates shown on badge: ${{ steps.scan.outputs.match_count }}"
+            echo
+            echo "Merge to accept, or close to reject."
+          } >> "$GITHUB_STEP_SUMMARY"

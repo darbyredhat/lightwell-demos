@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Maven settings for Demo 2. The mirror sends every download (the pom's repositories, the
+  Lightwell feeds, and Maven Central) through the company repository acmebank_java_repo on
+  Artifactory, so the app's pom.xml stays unchanged.
+  Credentials and the instance URL come from ART_URL, ART_USER and ART_TOKEN (the JFrog login).
+-->
+<settings>
+  <mirrors>
+    <mirror>
+      <id>acmebank_java_repo</id>
+      <name>Acme Bank Java (company repository on Artifactory)</name>
+      <mirrorOf>*</mirrorOf>
+      <url>${env.ART_URL}/artifactory/acmebank_java_repo</url>
+    </mirror>
+  </mirrors>
+  <servers>
+    <server>
+      <id>acmebank_java_repo</id>
+      <username>${env.ART_USER}</username>
+      <password>${env.ART_TOKEN}</password>
+    </server>
+  </servers>
+</settings>

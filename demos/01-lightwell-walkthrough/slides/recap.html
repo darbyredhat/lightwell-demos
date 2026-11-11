@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Demo 1: Lightwell walkthrough recap</title>
+<style>
+  :root {
+    --red: #ee0000;
+    --red-dark: #a30000;
+    --ink: #151515;
+    --gray: #4d4d4d;
+    --muted: #4f5255;
+    --line: #d2d2d2;
+    --panel: #f5f5f5;
+    --green: #3e8635;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1920px; height: 1080px; background: #fff; color: var(--ink);
+    font-family: "Red Hat Display", "Red Hat Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    position: relative; overflow: hidden;
+  }
+  .accent { position: absolute; left: 0; top: 0; width: 1920px; height: 14px; background: var(--red); }
+  header { padding: 60px 96px 0; }
+  .eyebrow { font-size: 26px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--red); }
+  h1 { font-size: 58px; font-weight: 700; margin-top: 10px; line-height: 1.1; }
+  .subtitle { font-size: 27px; color: var(--gray); margin-top: 10px; }
+
+  .flow { display: flex; align-items: stretch; gap: 0; padding: 48px 96px 0; }
+  .step {
+    flex: 1; background: var(--panel); border-top: 8px solid var(--red);
+    border-radius: 6px; padding: 30px 30px 30px;
+  }
+  .arrow { width: 64px; display: flex; align-items: center; justify-content: center; }
+  .arrow::after {
+    content: ""; width: 0; height: 0;
+    border-top: 22px solid transparent; border-bottom: 22px solid transparent; border-left: 28px solid var(--red);
+  }
+  .num {
+    display: inline-flex; width: 44px; height: 44px; border-radius: 50%; background: var(--red); color: #fff;
+    font-size: 24px; font-weight: 700; align-items: center; justify-content: center;
+  }
+  .step h2 { font-size: 33px; margin: 16px 0 6px; }
+  .step .lead { font-size: 21px; color: var(--gray); margin-bottom: 20px; }
+
+  .tiers { display: flex; flex-direction: column; gap: 14px; }
+  .tier { display: grid; grid-template-columns: 150px 1fr auto; gap: 10px; align-items: center; background: #fff;
+          border: 1px solid var(--line); border-radius: 4px; padding: 14px 16px; font-size: 21px; }
+  .tier b { font-size: 21px; }
+  .tier code, .mono { font-family: "Red Hat Mono", Menlo, Monaco, monospace; font-size: 19px; color: var(--ink); white-space: nowrap; }
+  .tier .note { color: var(--muted); font-size: 20px; white-space: nowrap; }
+  .tier.future { background: transparent; border-style: dashed; color: var(--muted); }
+  .tier.future code { color: var(--muted); }
+  .tier-foot { font-size: 18px; color: var(--muted); margin-top: 4px; }
+
+  .stat { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+  .stat .big { font-size: 72px; font-weight: 700; color: var(--red); line-height: 1; }
+  .stat .label { font-size: 21px; line-height: 1.25; }
+  .bullets { list-style: none; font-size: 20px; }
+  .bullets li { padding: 8px 0; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; }
+  .bullets li span:last-child { color: var(--muted); }
+  .sev { font-weight: 700; }
+  .sev.high { color: var(--red-dark); }
+  .sev.medium { color: #b35c00; }
+
+  .check { display: flex; align-items: center; gap: 14px; background: #fff; border: 1px solid var(--line);
+           border-radius: 4px; padding: 14px 16px; font-size: 20px; margin-bottom: 14px; line-height: 1.25; }
+  .badge { min-width: 112px; flex-shrink: 0; white-space: nowrap; text-align: center; font-size: 16px; font-weight: 700; color: #fff; border-radius: 4px; padding: 6px 8px; }
+  .pass { background: var(--green); }
+  .fail { background: var(--red-dark); }
+  .info { background: var(--gray); }
+
+  .thread {
+    margin: 36px 96px 0; padding: 18px 26px; border: 2px dashed var(--red); border-radius: 6px;
+    display: flex; align-items: center; gap: 22px; font-size: 24px;
+  }
+  .thread .tag { background: var(--red); color: #fff; font-weight: 700; font-size: 19px; white-space: nowrap; letter-spacing: 1px;
+                 text-transform: uppercase; padding: 6px 12px; border-radius: 4px; }
+  .thread .ver { font-family: "Red Hat Mono", Menlo, Monaco, monospace; font-weight: 700; font-size: 28px; }
+  .thread .before { color: var(--red-dark); }
+  .thread .after { color: var(--green); }
+  .thread .to { width: 0; height: 0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 16px solid var(--ink); }
+  .thread .muted { color: var(--muted); margin-left: auto; white-space: nowrap; }
+
+  .takeaways { display: flex; gap: 28px; padding: 36px 96px 0; }
+  .take { flex: 1; border-left: 8px solid var(--ink); padding: 6px 0 6px 22px; }
+  .take h3 { font-size: 28px; }
+  .take p { font-size: 20px; color: var(--gray); margin-top: 6px; }
+  footer { position: absolute; bottom: 26px; left: 96px; right: 96px; display: flex; justify-content: space-between;
+           font-size: 19px; color: var(--muted); }
+</style>
+</head>
+<body>
+  <div class="accent"></div>
+
+  <header>
+    <div class="eyebrow">Demo 1 &middot; Lightwell walkthrough &middot; Recap</div>
+    <h1>Fix the version you already run</h1>
+    <div class="subtitle">Red Hat rebuilds and patches open source libraries, so you can close CVEs without risky upgrades.</div>
+  </header>
+
+  <section class="flow">
+    <div class="step">
+      <span class="num">1</span>
+      <h2>The curated catalog</h2>
+      <div class="lead">Open source libraries, rebuilt by Red Hat</div>
+      <div class="tiers">
+        <div class="tier"><b>Validated</b><span class="note">rebuilt</span><code>6.0.3</code></div>
+        <div class="tier"><b>Remediated</b><span class="note">patched</span><code>6.0.3.rhlw-00001</code></div>
+        <div class="tier future"><b>Predisclosure</b><span class="note">production only</span><code>&hellip;-n0001</code></div>
+      </div>
+      <div class="tier-foot">Predisclosure: fixes before a CVE is public. Not in the public demo feeds.</div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <div class="step">
+      <span class="num">2</span>
+      <h2>Coverage of a real app</h2>
+      <div class="lead">Scan <span class="mono">payments-service</span> for Lightwell builds</div>
+      <div class="stat"><span class="big">5</span><span class="label">of 15 dependencies have drop-in<br>Lightwell builds: no code change</span></div>
+      <ul class="bullets">
+        <li><span>org.json</span><span><span class="sev high">2 High</span> CVEs fixed</span></li>
+        <li><span><b>woodstox-core</b></span><span><span class="sev medium">1 Medium</span> CVE fixed</span></li>
+        <li><span>json-path</span><span><span class="sev medium">1 Medium</span> CVE fixed</span></li>
+        <li><span>commons-io, jackson-databind</span><span>rebuilt</span></li>
+      </ul>
+    </div>
+
+    <div class="arrow"></div>
+
+    <div class="step">
+      <span class="num">3</span>
+      <h2>Verify the binary</h2>
+      <div class="lead">Prove it's the build Red Hat made</div>
+      <div class="check"><span class="badge pass">PASS</span>Signed SLSA provenance, verified with cosign</div>
+      <div class="check"><span class="badge fail">REJECTED</span>Tampered copy (one byte changed)</div>
+      <div class="check"><span class="badge info">SBOM</span>CycloneDX, 904 components, supplier Red Hat</div>
+    </div>
+  </section>
+
+  <div class="thread">
+    <span class="tag">The thread</span>
+    <b>Woodstox</b>
+    <span class="ver before">6.0.3</span>
+    <span class="to"></span>
+    <span class="ver after">6.0.3.rhlw-00001</span>
+    <span class="muted">CVE-2022-40152 fixed &middot; Demos 1 &middot; 2 &middot; 3</span>
+  </div>
+
+  <section class="takeaways">
+    <div class="take"><h3>Fix without upgrading</h3><p>The same version, with the security fix backported.</p></div>
+    <div class="take"><h3>Know what you're running</h3><p>Coverage of your actual app, with the CVEs each build fixes.</p></div>
+    <div class="take"><h3>Trust, but verify</h3><p>Signed provenance and an SBOM that anyone can check.</p></div>
+  </section>
+
+  <footer>
+    <span>Red Hat Lightwell &middot; public demo feeds</span>
+    <span>Demo 2: Artifactory integration &middot; Demo 3: CI/CD integration</span>
+  </footer>
+</body>
+</html>
