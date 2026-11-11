@@ -45,7 +45,7 @@
 
 ## Opening (1 min)
 
-**Show:** the opening slide [slides/opening.png](slides/opening.png) (full screen). It shows the three questions the demo answers, without the results, so the live scan and tamper test keep their surprise. To change a slide, edit its `.html` file in [slides/](slides/) and re-render the PNG (command in [slides/README.md](slides/README.md)).
+**Show:** the opening slide: open [slides/index.html](slides/index.html) in a browser and press F for full screen. It shows the three questions the demo answers, without the results, so the live scan and tamper test keep their surprise. To change a slide, edit its `.html` file in [slides/](slides/) and re-render the PNG (command in [slides/README.md](slides/README.md)).
 
 > "Every Java app ships open source libraries, and many have known CVEs. The usual fix is an upgrade: a new version, regression testing, sometimes breaking changes, across every app that uses it. Lightwell takes a different approach: Red Hat fixes the exact version you already run."
 
@@ -168,7 +168,7 @@ Expected: `"fixed": "6.0.3.rhlw-00001"`.
 
 ## Part 4: Wrap-up (1 min)
 
-**Show:** the recap slide [slides/recap.png](slides/recap.png): the results of each part, the Woodstox change, and the three takeaways along the bottom.
+**Show:** the recap slide: press the right arrow in the slideshow (or open [slides/index.html#2](slides/index.html#2)): the results of each part, the Woodstox change, and the three takeaways along the bottom.
 
 > "Three takeaways:"
 >

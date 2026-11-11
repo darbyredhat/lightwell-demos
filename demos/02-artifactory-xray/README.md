@@ -42,6 +42,10 @@
 
 ## Part 1: Lightwell as a trusted upstream (3 min)
 
+**Show:** the opening slide: open [slides/index.html](slides/index.html) in a browser and press F for full screen. Leave it up for about 30 seconds: the three questions this demo answers, and the Woodstox thread from Demo 1.
+
+> "In Demo 1, we found Woodstox 6.0.3 and its Lightwell fix. Now: how does that fix reach every developer, and how does your security team see it?"
+
 **Show:** Administration > Repositories.
 
 > "Lightwell plugs into Artifactory as remote repositories. Developers don't change anything."
@@ -154,6 +158,8 @@ Close the dialog with **Close** (not **Delete Rule**).
 ---
 
 ## Part 4: Wrap-up (1 min)
+
+**Show:** the recap slide: press the right arrow in the slideshow (or open [slides/index.html#2](slides/index.html#2)): the repository order, the one-line change, Xray's two fixes, and the three takeaways along the bottom.
 
 > "Lightwell slots into Artifactory as an upstream, with credentials in one place. Builds go through the company repository, and a one-line version change picks up the fix. With Red Hat's Lightwell data in Xray, the scanner shows the Lightwell fix next to the upstream one. Next, we'll see a pull request make that change automatically."
 

@@ -43,6 +43,10 @@
 
 ## Part 1: The setup (3 min)
 
+**Show:** the opening slide: open [slides/index.html](slides/index.html) in a browser and press F for full screen. Leave it up for about 30 seconds: the three questions this demo answers, and the Woodstox thread.
+
+> "In Demo 2, a developer changed one line by hand to pick up the Woodstox fix. Now let's have a workflow find every fix for the app and propose them as a pull request."
+
 **Show:** the plugin repo: `.github/workflows/lightwell-remediate.yml`.
 
 > "The plugin is a GitHub Actions workflow in its own repo. It holds a catalog of Lightwell builds and a scanner. It opens pull requests from there; nothing in the app's code changes to make that work."
@@ -149,6 +153,8 @@ gh api "repos/OWNER/lightwell-demo-payments-service/contents/lightwell-badge.jso
 ---
 
 ## Part 5: Wrap-up (1 min)
+
+**Show:** the recap slide: press the right arrow in the slideshow (or open [slides/index.html#2](slides/index.html#2)): the plugin's three pieces, the pull request, the badge going from 5 to 0, and the three takeaways along the bottom.
 
 > "Lightwell plugs into the workflow your developers already use: pull requests and CI. The scan finds what's covered, the PR shows the CVEs fixed, CI proves it builds, and a person decides to merge."
 

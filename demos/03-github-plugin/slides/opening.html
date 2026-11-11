@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Demo 3: GitHub plugin opening</title>
+<style>
+  :root {
+    --red: #ee0000;
+    --red-dark: #a30000;
+    --ink: #151515;
+    --gray: #4d4d4d;
+    --muted: #4f5255;
+    --line: #d2d2d2;
+    --panel: #f5f5f5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1920px; height: 1080px; background: #fff; color: var(--ink);
+    font-family: "Red Hat Display", "Red Hat Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    position: relative; overflow: hidden;
+  }
+  .accent { position: absolute; left: 0; top: 0; width: 1920px; height: 14px; background: var(--red); }
+  header { padding: 84px 96px 0; }
+  .eyebrow { font-size: 26px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--red); }
+  h1 { font-size: 80px; font-weight: 700; margin-top: 14px; line-height: 1.1; }
+  .subtitle { font-size: 32px; color: var(--gray); margin-top: 16px; }
+
+  .flow { display: flex; align-items: stretch; padding: 80px 96px 0; }
+  .step {
+    flex: 1; background: var(--panel); border-top: 8px solid var(--red);
+    border-radius: 6px; padding: 44px 40px 52px; display: flex; flex-direction: column; align-items: flex-start;
+  }
+  .arrow { width: 72px; display: flex; align-items: center; justify-content: center; }
+  .arrow::after {
+    content: ""; width: 0; height: 0;
+    border-top: 24px solid transparent; border-bottom: 24px solid transparent; border-left: 30px solid var(--red);
+  }
+  .num {
+    display: inline-flex; width: 52px; height: 52px; border-radius: 50%; background: var(--red); color: #fff;
+    font-size: 28px; font-weight: 700; align-items: center; justify-content: center;
+  }
+  .step h2 { font-size: 38px; margin: 20px 0 14px; }
+  .question { font-size: 30px; line-height: 1.3; font-weight: 500; margin-bottom: 60px; }
+  .see { align-self: stretch; margin-top: auto; padding-top: 24px; border-top: 1px solid var(--line); font-size: 23px; color: var(--muted); line-height: 1.35; }
+  .see b { color: var(--ink); }
+
+  .thread {
+    margin: 92px 96px 0; padding: 26px 28px; border: 2px dashed var(--red); border-radius: 6px;
+    display: flex; align-items: center; gap: 22px; font-size: 26px;
+  }
+  .thread .tag { background: var(--red); color: #fff; font-weight: 700; font-size: 19px; white-space: nowrap; letter-spacing: 1px;
+                 text-transform: uppercase; padding: 6px 12px; border-radius: 4px; }
+  .thread .ver { font-family: "Red Hat Mono", Menlo, Monaco, monospace; font-weight: 700; font-size: 30px; color: var(--red-dark); }
+  .thread .muted { color: var(--muted); margin-left: auto; white-space: nowrap; }
+
+  footer { position: absolute; bottom: 30px; left: 96px; right: 96px; display: flex; justify-content: space-between;
+           font-size: 19px; color: var(--muted); }
+</style>
+</head>
+<body>
+  <div class="accent"></div>
+
+  <header>
+    <div class="eyebrow">Demo 3 &middot; CI/CD with the GitHub plugin</div>
+    <h1>Fixes arrive as pull requests</h1>
+    <div class="subtitle">A GitHub workflow finds Lightwell builds for your app, opens a pull request, and your CI proves it works.</div>
+  </header>
+
+  <section class="flow">
+    <div class="step">
+      <span class="num">1</span>
+      <h2>The plugin</h2>
+      <div class="question">What does it take to set up?</div>
+      <div class="see"><b>You'll see:</b> a workflow repo, its catalog, and one secret</div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <div class="step">
+      <span class="num">2</span>
+      <h2>The pull request</h2>
+      <div class="question">What does a developer get?</div>
+      <div class="see"><b>You'll see:</b> the CVEs each bump fixes, and CI on the Lightwell versions</div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <div class="step">
+      <span class="num">3</span>
+      <h2>Merge and badge</h2>
+      <div class="question">How do we know it's done?</div>
+      <div class="see"><b>You'll see:</b> a person merges, and the app's badge updates</div>
+    </div>
+  </section>
+
+  <div class="thread">
+    <span class="tag">The thread</span>
+    <b>Woodstox</b>
+    <span class="ver">6.0.3</span>
+    <span>from Demos 1 and 2. Now a pull request applies the fix.</span>
+    <span class="muted">Demos 1 &middot; 2 &middot; 3</span>
+  </div>
+
+  <footer>
+    <span>Red Hat Lightwell &middot; public demo feeds</span>
+    <span>Demo 1: Lightwell walkthrough &middot; Demo 2: Artifactory and Xray</span>
+  </footer>
+</body>
+</html>

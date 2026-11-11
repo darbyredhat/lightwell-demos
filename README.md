@@ -21,6 +21,7 @@ Each demo folder has the same files:
 | `setup.md` | Once per presenter |
 | `preflight.sh` | Before every presentation: prints `OK` or `FAIL` for each check |
 | `README.md` | The presenter script: checklist, parts with what to show and say, reset, troubleshooting |
+| `slides/` | During the demo: open `slides/index.html` for a slideshow of the opening slide (the three questions) and the recap slide (the results) |
 
 ## Quick start
 
