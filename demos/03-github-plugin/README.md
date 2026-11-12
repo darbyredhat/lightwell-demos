@@ -33,6 +33,7 @@
   demos/03-github-plugin/preflight.sh OWNER
   ```
 - [ ] Badge on the app's home page shows **4 available** (hard refresh, **Cmd+Shift+R**, about 1 minute after the reset).
+- [ ] Reset at least 1 hour before presenting, so the app's home page doesn't show the yellow "lightwell/badge had recent pushes" banner (see Part 4).
 - [ ] Browser tabs open:
   - `https://github.com/OWNER/lightwell-demo-plugin/actions`
   - `https://github.com/OWNER/lightwell-demo-payments-service` (README with the badge)
@@ -146,6 +147,10 @@ Expected: the badge goes from **4 available** to **0 available**. Actions shows 
 
 > "Four down to zero. Every Lightwell update for this app is applied, CI proved it builds, and a person approved the merge."
 
+**Presenter note:** after badge sync, the app's home page shows a yellow banner, "lightwell/badge had recent pushes", with a **Compare & pull request** button. Don't click it. GitHub offers this for any branch pushed in the last hour without a PR, and `lightwell/badge` only holds the badge data (`lightwell-badge.json`); it's never merged. Only people with write access see the banner, and it goes away about an hour after the push.
+
+> If asked: "GitHub suggests a PR for any recently pushed branch. That one just holds the badge data."
+
 To check from the terminal:
 
 ```sh
@@ -177,8 +182,14 @@ It closes open PRs and deletes their branch, moves the app's `main` back to the 
 |---|---|
 | Run fails at "Require LIGHTWELL_REPO_TOKEN" | Secret missing or expired; set it again (see [setup.md](setup.md)) |
 | 403 or 404 checking out the app | Token not granted on `OWNER/lightwell-demo-payments-service`, or wrong target |
+| Run fails publishing the badge: `Permission to OWNER/lightwell-demo-payments-service.git denied` (403) | The token can't write to the app. Edit it: Repository access **Only select repositories** with the app repo, and **Contents: Read and write** |
+| `pull request create failed: ... Resource not accessible by personal access token (createPullRequest)` | The token can't open PRs. Edit it: **Pull requests: Read and write** |
+| `could not add label: 'lightwell' not found` | The app repo has no `lightwell` label (repos created before the setup script made it). Run `gh label create lightwell -R OWNER/lightwell-demo-payments-service --color 0E4429` |
 | No PR, "No Lightwell remediations available" | The app's `main` already has the Lightwell versions (a PR was merged); run `reset.sh` |
 | PR updated instead of new | An open PR from `lightwell/remediations` exists; run `reset.sh` first |
 | Build check fails on the PR | A bumped Lightwell build doesn't resolve on the public feed; check the catalog |
 | Badge doesn't change | Shields.io and the browser cache it. Wait about 1 minute after badge sync finishes, then hard refresh (**Cmd+Shift+R**). If it still doesn't change, check badge sync succeeded, or run it manually |
+| Yellow "lightwell/badge had recent pushes" banner with **Compare & pull request** | Expected after a reset or merge; don't click it. It goes away about an hour after badge sync pushes (see the Part 4 presenter note) |
 | Preflight `FAIL main at demo-start` right after a reset | Run `reset.sh` again; if it repeats, check the app repo has no branch protection on `main` |
+
+Token fixes: editing an existing token keeps its value, so the secret still works. If you create a new token instead, set the secret again ([setup.md](setup.md) step 3). Preflight only checks that the secret exists, not its permissions; a real run of the plugin is the test.
