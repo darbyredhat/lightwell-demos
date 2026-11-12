@@ -49,6 +49,10 @@ git -C "$WORK/lightwell-demo-payments-service" tag demo-start
 git -C "$WORK/lightwell-demo-payments-service" push -q origin demo-start
 echo "OK    tagged $APP_REPO main as demo-start"
 
+# The plugin adds this label to its PR; creating labels needs Issues permission, which the token doesn't have.
+gh label create lightwell -R "$APP_REPO" --description "Lightwell remediation proposals" --color "0E4429" >/dev/null
+echo "OK    created label lightwell on $APP_REPO"
+
 echo
 echo "Paste a fine-grained GitHub token with Contents and Pull requests (read and write) on $APP_REPO."
 echo "Input is hidden. Press Enter on an empty line to skip and set it later (see setup.md)."
