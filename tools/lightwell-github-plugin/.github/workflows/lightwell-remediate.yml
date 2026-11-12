@@ -109,7 +109,7 @@ jobs:
             --root . \
             --catalog "$PLUGIN/catalog.json" \
             --out-dir /tmp/lightwell-out
-          MATCH_COUNT=$(python3 -c "import json; print(len(json.load(open('/tmp/lightwell-out/matches.json'))['matches']))")
+          MATCH_COUNT=$(python3 -c "import json; print(sum(1 for m in json.load(open('/tmp/lightwell-out/matches.json'))['matches'] if m.get('apply', True)))")
           echo "match_count=$MATCH_COUNT" >> "$GITHUB_OUTPUT"
           cat /tmp/lightwell-out/report.md >> "$GITHUB_STEP_SUMMARY"
           echo "Target: $TARGET_REPO" >> "$GITHUB_STEP_SUMMARY"
@@ -172,7 +172,7 @@ jobs:
 
           TITLE=$(python3 - <<'PY'
           import json
-          matches = json.load(open("/tmp/lightwell-out/matches.json"))["matches"]
+          matches = [m for m in json.load(open("/tmp/lightwell-out/matches.json"))["matches"] if m.get("apply", True)]
           if len(matches) == 1:
               m = matches[0]
               print(f"chore(deps): remediate {m['artifactId']} to {m['toVersion']} (Lightwell)")

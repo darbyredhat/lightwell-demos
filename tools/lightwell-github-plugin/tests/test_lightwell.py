@@ -245,6 +245,23 @@ class BadgeTests(unittest.TestCase):
                 self.assertEqual(payload["message"], message)
                 self.assertEqual(payload["color"], color)
 
+    def test_badge_skips_informational_matches(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            matches_path = Path(tmp) / "matches.json"
+            out = Path(tmp) / "badge.json"
+            matches_path.write_text(
+                json.dumps({"matches": [{"apply": True}, {"apply": False}]}),
+                encoding="utf-8",
+            )
+            old = sys.argv
+            try:
+                sys.argv = ["write_badge.py", "--matches", str(matches_path), "--out", str(out)]
+                self.assertEqual(write_badge.main(), 0)
+            finally:
+                sys.argv = old
+            payload = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(payload["message"], "1 available")
+
 
 class ReportTests(unittest.TestCase):
     def test_report_mentions_auto_pr_not_confirm(self) -> None:
@@ -528,6 +545,13 @@ class OsvCveTests(unittest.TestCase):
         osv_cves.attach_cves_to_matches(matches, [])
         self.assertEqual(matches[0]["cves"], [])
         self.assertIsNone(matches[0]["max_cvss"])
+
+    def test_cves_from_upstream_field(self) -> None:
+        doc = {
+            "id": "RHLW-2026-1da18ff8e343fdf8",
+            "upstream": ["CVE-2023-5072", "CVE-2022-45688", "GHSA-3vqj-43w4-2q58"],
+        }
+        self.assertEqual(osv_cves.osv_cve_ids(doc), ["CVE-2022-45688", "CVE-2023-5072"])
 
 
 class SyncCatalogVersionOrderTests(unittest.TestCase):

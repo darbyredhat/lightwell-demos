@@ -21,7 +21,7 @@ This creates two **public** repos under your account (new repos, not forks, so s
 | `OWNER/lightwell-demo-plugin` | A copy of [tools/lightwell-github-plugin](../../tools/lightwell-github-plugin/) |
 | `OWNER/lightwell-demo-payments-service` | A copy of [apps/payments-service](../../apps/payments-service/), tagged `demo-start` |
 
-The script replaces the `OWNER` placeholder in the workflows and README with your user. Pushing the app triggers **Build** and **Lightwell badge sync** once, which publishes the first badge ("5 available").
+The script replaces the `OWNER` placeholder in the workflows and README with your user. Pushing the app triggers **Build** and **Lightwell badge sync** once, which publishes the first badge ("4 available").
 
 At the end it asks for the token (step 3). You can paste it then, or press Enter and set it later.
 

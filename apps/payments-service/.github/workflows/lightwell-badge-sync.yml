@@ -56,7 +56,7 @@ jobs:
             --catalog "$PLUGIN/catalog.json" \
             --out-dir /tmp/lightwell-out
 
-          MATCH_COUNT=$(python3 -c "import json; print(len(json.load(open('/tmp/lightwell-out/matches.json'))['matches']))")
+          MATCH_COUNT=$(python3 -c "import json; print(sum(1 for m in json.load(open('/tmp/lightwell-out/matches.json'))['matches'] if m.get('apply', True)))")
           echo "Available library updates after scan: $MATCH_COUNT"
           echo "Available library updates: $MATCH_COUNT" >> "$GITHUB_STEP_SUMMARY"
 

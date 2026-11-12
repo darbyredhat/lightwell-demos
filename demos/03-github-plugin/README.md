@@ -19,7 +19,7 @@
 |---|---|---|
 | 1. The setup | 3 min | Plugin repo, target app, one secret |
 | 2. Run the plugin | 4 min | Actions run: scan, CVE report, PR opened |
-| 3. The pull request | 5 min | CVE table, 5-line pom diff, CI builds the Lightwell versions and passes |
+| 3. The pull request | 5 min | CVE table, 4-line pom diff, CI builds the Lightwell versions and passes |
 | 4. Merge and badge | 2 min | Merge; badge sync updates the count |
 | 5. Wrap-up | 1 min | Business value |
 
@@ -32,12 +32,12 @@
   demos/03-github-plugin/reset.sh OWNER
   demos/03-github-plugin/preflight.sh OWNER
   ```
-- [ ] Badge on the app's home page shows **5 available** (hard refresh, **Cmd+Shift+R**, about 1 minute after the reset).
+- [ ] Badge on the app's home page shows **4 available** (hard refresh, **Cmd+Shift+R**, about 1 minute after the reset).
 - [ ] Browser tabs open:
   - `https://github.com/OWNER/lightwell-demo-plugin/actions`
   - `https://github.com/OWNER/lightwell-demo-payments-service` (README with the badge)
   - `https://github.com/OWNER/lightwell-demo-payments-service/pulls`
-- [ ] Optional dry run the day before (Actions > Lightwell Remediate > Run workflow > dry_run checked): expect success, "Matches: 5", no PR.
+- [ ] Optional dry run the day before (Actions > Lightwell Remediate > Run workflow > dry_run checked): expect success, "Matches: 4", no PR.
 
 ---
 
@@ -72,10 +72,10 @@
 |---|---|
 | Scan | `scan_poms.py` compares each dependency in the app's `pom.xml` files with the catalog |
 | Exact match (library and `fromVersion`) | Proposes `toVersion`, and looks up the CVEs that build fixes in Red Hat's Lightwell OSV data (the PR's CVE and CVSS table) |
-| Library matches, other version | Reported as "serviced at a different version", informational only. None for payments-service with this catalog |
+| Library matches, other version | Reported as "serviced at a different version", informational only, not in the pom diff or the badge count. For payments-service: json-path 2.7.0 (Lightwell has 2.8.0) |
 | Apply | `apply_bumps.py` writes the `toVersion` values into the pom; that becomes the PR |
 
-**Presenter note:** the catalog has 8 entries; 5 match payments-service (org.json, woodstox-core, json-path, commons-io, jackson-databind). It lists only builds verified to build on the public feed; httpclient 4.5.12 and spring-core 5.3.18 were removed because their Lightwell builds are missing dependencies there.
+**Presenter note:** the catalog has 7 entries; 4 are exact matches for payments-service (org.json, woodstox-core, commons-io, jackson-databind). It lists only builds verified to build on the public feed; httpclient 4.5.12 and spring-core 5.3.18 were removed because their Lightwell builds are missing dependencies there, and json-path 2.7.0 because Red Hat removed its Lightwell build from the public feed (November 2026).
 
 **Show:** Settings > Secrets and variables > Actions: `LIGHTWELL_REPO_TOKEN`.
 
@@ -97,7 +97,7 @@
 
 **Show:** the run (about 1 minute): Select target repos > Remediate. Open the job summary.
 
-Expected: "Available library updates: 5", the Lightwell report (bumps with CVEs and CVSS), and "Opened or updated on OWNER/lightwell-demo-payments-service: <PR URL>".
+Expected: "Available library updates: 4", the Lightwell report (bumps with CVEs and CVSS), and "Opened or updated on OWNER/lightwell-demo-payments-service: <PR URL>".
 
 ---
 
@@ -111,11 +111,14 @@ Expected: "Available library updates: 5", the Lightwell report (bumps with CVEs 
 |---|---|---|---|
 | org.json | 20220320 | 20220320.0.0.rhlw-00003 | CVE-2022-45688 (7.5 High), CVE-2023-5072 (7.5 High) |
 | woodstox-core | 6.0.3 | 6.0.3.rhlw-00001 | CVE-2022-40152 (6.5 Medium) |
-| json-path | 2.7.0 | 2.7.0.rhlw-00001 | CVE-2023-51074 (5.3 Medium) |
 | commons-io | 2.11.0 | 2.11.0.rhlw-00001 | validated rebuild |
 | jackson-databind | 2.13.4 | 2.13.4.rhlw-00001 | validated rebuild |
 
-**Show:** Files changed: five lines in `pom.xml`.
+The table also lists json-path 2.7.0 as **Serviced at a different version** (`2.8.0.rhlw-00001`, CVE-2023-51074). It's informational: not in the diff or the badge count.
+
+> If asked: "Lightwell covers json-path at 2.8.0, not the 2.7.0 this app runs. That's a real upgrade, so the plugin reports it instead of changing it."
+
+**Show:** Files changed: four lines in `pom.xml`.
 
 > "Same versions, just the Lightwell suffix. No code changes."
 
@@ -129,7 +132,7 @@ Expected: "Available library updates: 5", the Lightwell report (bumps with CVEs 
 
 ## Part 4: Merge and badge (2 min)
 
-**Show:** the app README badge: "Lightwell library updates: 5 available".
+**Show:** the app README badge: "Lightwell library updates: 4 available".
 
 **Do:** merge the PR.
 
@@ -139,9 +142,9 @@ Expected: "Available library updates: 5", the Lightwell report (bumps with CVEs 
 
 > While waiting: "The badge is an image served by shields.io, so it takes about a minute to catch up." Use the minute to recap the PR.
 
-Expected: the badge goes from **5 available** to **0 available**. Actions shows **Build** and **Lightwell badge sync** both succeeded on `main` after the merge.
+Expected: the badge goes from **4 available** to **0 available**. Actions shows **Build** and **Lightwell badge sync** both succeeded on `main` after the merge.
 
-> "Five down to zero. Every Lightwell update for this app is applied, CI proved it builds, and a person approved the merge."
+> "Four down to zero. Every Lightwell update for this app is applied, CI proved it builds, and a person approved the merge."
 
 To check from the terminal:
 
@@ -154,7 +157,7 @@ gh api "repos/OWNER/lightwell-demo-payments-service/contents/lightwell-badge.jso
 
 ## Part 5: Wrap-up (1 min)
 
-**Show:** the recap slide: press the right arrow in the slideshow (or open [slides/index.html#2](slides/index.html#2)): the plugin's three pieces, the pull request, the badge going from 5 to 0, and the three takeaways along the bottom.
+**Show:** the recap slide: press the right arrow in the slideshow (or open [slides/index.html#2](slides/index.html#2)): the plugin's three pieces, the pull request, the badge going from 4 to 0, and the three takeaways along the bottom.
 
 > "Lightwell plugs into the workflow your developers already use: pull requests and CI. The scan finds what's covered, the PR shows the CVEs fixed, CI proves it builds, and a person decides to merge."
 
@@ -166,7 +169,7 @@ gh api "repos/OWNER/lightwell-demo-payments-service/contents/lightwell-badge.jso
 demos/03-github-plugin/reset.sh OWNER
 ```
 
-It closes open PRs and deletes their branch, moves the app's `main` back to the `demo-start` tag (undoing a merged PR without revert commits), and reruns badge sync. Wait about 1 minute after badge sync finishes, then hard refresh (**Cmd+Shift+R**) to see "5 available".
+It closes open PRs and deletes their branch, moves the app's `main` back to the `demo-start` tag (undoing a merged PR without revert commits), and reruns badge sync. Wait about 1 minute after badge sync finishes, then hard refresh (**Cmd+Shift+R**) to see "4 available".
 
 ## Troubleshooting
 

@@ -25,7 +25,8 @@ def main() -> int:
     args = parser.parse_args()
 
     matches = json.loads(args.matches.read_text(encoding="utf-8")).get("matches", [])
-    count = len(matches)
+    # Count only drop-in bumps the PR applies; "serviced at a different version" rows are informational.
+    count = sum(1 for m in matches if m.get("apply", True))
     if count == 0:
         message = "0 available"
         color = "informational"

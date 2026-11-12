@@ -15,7 +15,7 @@
 |---|---|---|
 | Opening | 1 min | The problem: CVEs, upgrades, regression testing |
 | 1. The curated repository | 3 min | Tiers and version suffixes, in the console |
-| 2. Coverage of a real app | 5 min | The plugin scans `payments-service`: 5 drop-in Lightwell builds, with the CVEs they fix |
+| 2. Coverage of a real app | 5 min | The plugin scans `payments-service`: 4 drop-in Lightwell builds, with the CVEs they fix |
 | 3. Hardened binaries | 5 min | SBOM, signed provenance, signatures; `cosign` verifies, the tamper test fails |
 | 4. Wrap-up | 1 min | Three takeaways, then the hand-off to Demo 2 |
 
@@ -102,7 +102,7 @@ python3 tools/lightwell-github-plugin/lightwell-github/scan_poms.py --root apps/
 code /tmp/lw-scan/report.md
 ```
 
-Expected: `Wrote /private/tmp/lw-scan/matches.json (5 match(es))`.
+Expected: `Wrote /private/tmp/lw-scan/matches.json (5 match(es))`: 4 drop-ins plus json-path, which is serviced at a different version.
 
 **Show:** `report.md` in VS Code's Markdown preview (**Cmd+Shift+V**, zoom with **Cmd+=**). Walk through the "Proposed bumps" table:
 
@@ -110,11 +110,12 @@ Expected: `Wrote /private/tmp/lw-scan/matches.json (5 match(es))`.
 |---|---|---|---|
 | org.json | 20220320 | 20220320.0.0.rhlw-00003 | CVE-2022-45688 (7.5 High), CVE-2023-5072 (7.5 High) |
 | **woodstox-core** | **6.0.3** | **6.0.3.rhlw-00001** | **CVE-2022-40152 (6.5 Medium)** |
-| json-path | 2.7.0 | 2.7.0.rhlw-00001 | CVE-2023-51074 (5.3 Medium) |
 | commons-io | 2.11.0 | 2.11.0.rhlw-00001 | validated rebuild |
 | jackson-databind | 2.13.4 | 2.13.4.rhlw-00001 | validated rebuild |
 
-> "Five of the app's 15 dependencies have drop-ins: same version, just a Lightwell suffix, no code change. Three of them fix known CVEs, two of them High. The CVE details come straight from Red Hat's Lightwell advisories."
+The table also lists json-path 2.7.0 as **Serviced at a different version** (`2.8.0.rhlw-00001`, CVE-2023-51074): Lightwell covers it at 2.8.0, which is a real upgrade, so it isn't proposed as a drop-in.
+
+> "Four of the app's 15 dependencies have drop-ins: same version, just a Lightwell suffix, no code change. Two of them fix three known CVEs, two of those High. The CVE details come straight from Red Hat's Lightwell advisories."
 
 **Show:** the "Proposed pom diff" section.
 
@@ -187,7 +188,7 @@ Expected: `"fixed": "6.0.3.rhlw-00001"`.
 | Validated vs remediated? | Validated: rebuilt and verifiable, not patched. Remediated: the same version, with security fixes backported |
 | Why the public feed? | A demo snapshot that needs no credentials. Production adds predisclosure and the full catalog |
 | What's predisclosure? | Fixes before a CVE is public. Production only, so it's greyed out on the recap slide |
-| Why only 5 of 15? | The catalog lists builds verified to build on the public feed. Spring and HttpClient have Lightwell builds, but they're missing dependencies there. Production covers more |
+| Why only 4 of 15? | The catalog lists builds verified to build on the public feed. Spring and HttpClient have Lightwell builds, but they're missing dependencies there. json-path is covered at 2.8.0, not the app's 2.7.0. Production covers more |
 | How do I trust the JAR? | `cosign` checks Red Hat's signed SLSA provenance against the JAR's digest |
 
 ---

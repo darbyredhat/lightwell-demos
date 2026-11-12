@@ -4,7 +4,7 @@
 Lightwell publishes OSV docs for remediated builds. Public demo index (anonymous):
   https://packages.redhat.com/api/pulp-content/public-lightwell-demo/osv/java/remediated
 
-Only CVE IDs present in advisory ``aliases`` are returned — never invented.
+Only CVE IDs present in advisory ``aliases`` or ``upstream`` are returned — never invented.
 """
 
 from __future__ import annotations
@@ -167,7 +167,7 @@ def severity_with_fallback(
     if score is not None:
         return score, rating, vector
 
-    aliases = [a for a in (doc.get("aliases") or []) if isinstance(a, str)]
+    aliases = advisory_aliases(doc)
     # Prefer GHSA — typically includes CVSS when the CVE shell does not.
     ordered = sorted(aliases, key=lambda a: (0 if a.startswith("GHSA-") else 1, a))
     seen: set[str] = set()
@@ -193,14 +193,17 @@ def severity_with_fallback(
     return None, None, None
 
 
+def advisory_aliases(doc: dict[str, Any]) -> list[str]:
+    """Related IDs (CVE, GHSA) from ``aliases`` and ``upstream``.
+
+    Lightwell advisories list upstream CVEs in ``upstream`` (OSV 1.7+); older ones used ``aliases``.
+    """
+    ids = (doc.get("aliases") or []) + (doc.get("upstream") or [])
+    return [a for a in ids if isinstance(a, str)]
+
+
 def osv_cve_ids(doc: dict[str, Any]) -> list[str]:
-    return sorted(
-        {
-            a
-            for a in (doc.get("aliases") or [])
-            if isinstance(a, str) and a.startswith("CVE-")
-        }
-    )
+    return sorted({a for a in advisory_aliases(doc) if a.startswith("CVE-")})
 
 
 def osv_fixed_events(doc: dict[str, Any]):

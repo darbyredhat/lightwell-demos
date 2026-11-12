@@ -11,14 +11,6 @@
     {
       "groupId": "com.jayway.jsonpath",
       "artifactId": "json-path",
-      "fromVersion": "2.7.0",
-      "toVersion": "2.7.0.rhlw-00001",
-      "tier": "remediated",
-      "summary": "Lightwell remediated rebuild of json-path 2.7.0"
-    },
-    {
-      "groupId": "com.jayway.jsonpath",
-      "artifactId": "json-path",
       "fromVersion": "2.8.0",
       "toVersion": "2.8.0.rhlw-00001",
       "tier": "remediated",

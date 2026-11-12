@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Puts the Demo 3 app repo back to its starting state (before and after each run):
 # closes open PRs and deletes their branches, moves main back to the demo-start tag
-# (undoing a merged PR without revert commits), and reruns badge sync so the badge shows 5 again.
+# (undoing a merged PR without revert commits), and reruns badge sync so the badge shows 4 again.
 #
 # Usage: demos/03-github-plugin/reset.sh OWNER
 # Requires: gh (logged in as OWNER).
@@ -30,4 +30,4 @@ else
 fi
 
 gh workflow run lightwell-badge-sync.yml -R "$APP_REPO" >/dev/null
-echo "OK    badge sync started; the badge shows 5 again about 1 minute after it finishes (hard refresh)"
+echo "OK    badge sync started; the badge shows 4 again about 1 minute after it finishes (hard refresh)"
