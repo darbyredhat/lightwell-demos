@@ -15,7 +15,7 @@
 |---|---|---|
 | Opening | 1 min | The problem: CVEs, upgrades, regression testing |
 | 1. The curated repository | 3 min | Tiers and version suffixes, in the console |
-| 2. Coverage of a real app | 5 min | The plugin scans `payments-service`: 4 drop-in Lightwell builds, with the CVEs they fix |
+| 2. Coverage of an app | 5 min | The plugin scans `payments-service`: 4 drop-in Lightwell builds, with the CVEs they fix |
 | 3. Hardened binaries | 5 min | SBOM, signed provenance, signatures; `cosign` verifies, the tamper test fails |
 | 4. Wrap-up | 1 min | Three takeaways, then the hand-off to Demo 2 |
 
@@ -87,7 +87,7 @@ Expected: validated `6.0.3`; remediated `6.0.3.rhlw-00001`.
 
 ---
 
-## Part 2: Coverage of a real app (5 min)
+## Part 2: Coverage of an app (5 min)
 
 > "So how much of a real application does Lightwell cover? Here's a payments service with typical dependencies: Spring, Jackson, Commons IO, JSON libraries, Woodstox."
 
