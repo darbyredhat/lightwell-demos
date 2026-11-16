@@ -1,6 +1,6 @@
 # Demo 3: CI/CD Integration with the Lightwell GitHub Plugin
 
-**First time?** Do [setup.md](setup.md) once. Run every command from the repo root. `OWNER` below is your GitHub user.
+**First time?** Do [setup.md](setup.md) once. Run every command from the repo root. Set your GitHub user once per terminal with `export GITHUB_OWNER=<your-github-user>`; the commands use `$GITHUB_OWNER`, and `OWNER` in links and repo names below means the same user.
 
 - **Length:** about 15 minutes.
 - **Audience:** technical.
@@ -29,8 +29,8 @@
 
 - [ ] Reset done and preflight passes (all `OK`):
   ```sh
-  demos/03-github-plugin/reset.sh OWNER
-  demos/03-github-plugin/preflight.sh OWNER
+  demos/03-github-plugin/reset.sh "$GITHUB_OWNER"
+  demos/03-github-plugin/preflight.sh "$GITHUB_OWNER"
   ```
 - [ ] Badge on the app's home page shows **4 available** (hard refresh, **Cmd+Shift+R**, about 1 minute after the reset).
 - [ ] Reset at least 1 hour before presenting, so the app's home page doesn't show the yellow "lightwell/badge had recent pushes" banner (see Part 4).
@@ -154,8 +154,8 @@ Expected: the badge goes from **4 available** to **0 available**. Actions shows 
 To check from the terminal:
 
 ```sh
-gh run list -R OWNER/lightwell-demo-payments-service --branch main --limit 2
-gh api "repos/OWNER/lightwell-demo-payments-service/contents/lightwell-badge.json?ref=lightwell/badge" --jq .content | base64 -d | grep message
+gh run list -R "$GITHUB_OWNER/lightwell-demo-payments-service" --branch main --limit 2
+gh api "repos/$GITHUB_OWNER/lightwell-demo-payments-service/contents/lightwell-badge.json?ref=lightwell/badge" --jq .content | base64 -d | grep message
 ```
 
 ---
@@ -171,7 +171,7 @@ gh api "repos/OWNER/lightwell-demo-payments-service/contents/lightwell-badge.jso
 ## Reset (before and after each run)
 
 ```sh
-demos/03-github-plugin/reset.sh OWNER
+demos/03-github-plugin/reset.sh "$GITHUB_OWNER"
 ```
 
 It closes open PRs and deletes their branch, moves the app's `main` back to the `demo-start` tag (undoing a merged PR without revert commits), and reruns badge sync. Wait about 1 minute after badge sync finishes, then hard refresh (**Cmd+Shift+R**) to see "4 available".
@@ -184,7 +184,7 @@ It closes open PRs and deletes their branch, moves the app's `main` back to the 
 | 403 or 404 checking out the app | Token not granted on `OWNER/lightwell-demo-payments-service`, or wrong target |
 | Run fails publishing the badge: `Permission to OWNER/lightwell-demo-payments-service.git denied` (403) | The token can't write to the app. Edit it: Repository access **Only select repositories** with the app repo, and **Contents: Read and write** |
 | `pull request create failed: ... Resource not accessible by personal access token (createPullRequest)` | The token can't open PRs. Edit it: **Pull requests: Read and write** |
-| `could not add label: 'lightwell' not found` | The app repo has no `lightwell` label (repos created before the setup script made it). Run `gh label create lightwell -R OWNER/lightwell-demo-payments-service --color 0E4429` |
+| `could not add label: 'lightwell' not found` | The app repo has no `lightwell` label (repos created before the setup script made it). Run `gh label create lightwell -R "$GITHUB_OWNER/lightwell-demo-payments-service" --color 0E4429` |
 | No PR, "No Lightwell remediations available" | The app's `main` already has the Lightwell versions (a PR was merged); run `reset.sh` |
 | PR updated instead of new | An open PR from `lightwell/remediations` exists; run `reset.sh` first |
 | Build check fails on the PR | A bumped Lightwell build doesn't resolve on the public feed; check the catalog |

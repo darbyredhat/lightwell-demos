@@ -1,6 +1,6 @@
 # Demo 3 setup (once per presenter)
 
-You need a GitHub account and the GitHub CLI (`gh`). Run every command from the repo root. `OWNER` below is your GitHub user.
+You need a GitHub account and the GitHub CLI (`gh`). Run every command from the repo root. Set your GitHub user once per terminal with `export GITHUB_OWNER=<your-github-user>`; the commands use `$GITHUB_OWNER`, and `OWNER` in links and repo names below means the same user.
 
 ## 1. Log in to GitHub CLI
 
@@ -11,7 +11,7 @@ gh auth login
 ## 2. Create the demo repos
 
 ```sh
-demos/03-github-plugin/create-demo-repos.sh OWNER
+demos/03-github-plugin/create-demo-repos.sh "$GITHUB_OWNER"
 ```
 
 This creates two **public** repos under your account (new repos, not forks, so shields.io can read the badge and GitHub never suggests a PR against someone else's repo):
@@ -35,16 +35,16 @@ Create a **fine-grained personal access token** (GitHub > Settings > Developer s
 If you skipped it in step 2, store it now (input is hidden; the token is never written to a file):
 
 ```sh
-read -rs PAT && printf '%s' "$PAT" | gh secret set LIGHTWELL_REPO_TOKEN -R OWNER/lightwell-demo-plugin && unset PAT
+read -rs PAT && printf '%s' "$PAT" | gh secret set LIGHTWELL_REPO_TOKEN -R "$GITHUB_OWNER/lightwell-demo-plugin" && unset PAT
 ```
 
 ## 4. Dry run
 
 ```sh
-demos/03-github-plugin/preflight.sh OWNER
+demos/03-github-plugin/preflight.sh "$GITHUB_OWNER"
 ```
 
-Expect all `OK`. Then rehearse once with [README.md](README.md) (run the plugin, merge the PR, watch the badge), and finish with `reset.sh OWNER`.
+Expect all `OK`. Then rehearse once with [README.md](README.md) (run the plugin, merge the PR, watch the badge), and finish with `reset.sh "$GITHUB_OWNER"`.
 
 ## Updating the demo repos
 
