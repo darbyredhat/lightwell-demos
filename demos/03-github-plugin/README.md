@@ -27,7 +27,11 @@
 
 ## Before the demo
 
-- [ ] GitHub user set in the demo terminal: `export GITHUB_OWNER=<your-github-user>`. The commands use `$GITHUB_OWNER`, and `GITHUB_OWNER` in links and repo names below means the same user.
+- [ ] GitHub user set in the demo terminal. The commands use `$GITHUB_OWNER`, and `GITHUB_OWNER` in links and repo names below means the same user.
+  ```sh
+  echo "GITHUB_OWNER=${GITHUB_OWNER:-<not set>}"   # check the current value
+  export GITHUB_OWNER=<your-github-user>           # set it for this terminal
+  ```
 - [ ] Reset done and preflight passes (all `OK`):
   ```sh
   demos/03-github-plugin/reset.sh "$GITHUB_OWNER"
