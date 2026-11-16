@@ -1,6 +1,6 @@
 # Demo 3: CI/CD Integration with the Lightwell GitHub Plugin
 
-**First time?** Do [setup.md](setup.md) once. Run every command from the repo root. Set your GitHub user once per terminal with `export GITHUB_OWNER=<your-github-user>`; the commands use `$GITHUB_OWNER`, and `OWNER` in links and repo names below means the same user.
+**First time?** Do [setup.md](setup.md) once. Run every command from the repo root.
 
 - **Length:** about 15 minutes.
 - **Audience:** technical.
@@ -10,8 +10,8 @@
 
 | Repo | From | Role |
 |---|---|---|
-| `OWNER/lightwell-demo-plugin` | [tools/lightwell-github-plugin](../../tools/lightwell-github-plugin/) | The plugin: workflow **Lightwell Remediate**, scanner, catalog |
-| `OWNER/lightwell-demo-payments-service` | [apps/payments-service](../../apps/payments-service/) | The target app: workflows **Build** and **Lightwell badge sync** |
+| `GITHUB_OWNER/lightwell-demo-plugin` | [tools/lightwell-github-plugin](../../tools/lightwell-github-plugin/) | The plugin: workflow **Lightwell Remediate**, scanner, catalog |
+| `GITHUB_OWNER/lightwell-demo-payments-service` | [apps/payments-service](../../apps/payments-service/) | The target app: workflows **Build** and **Lightwell badge sync** |
 
 - **Last verified:** 2026-11-11.
 
@@ -27,6 +27,7 @@
 
 ## Before the demo
 
+- [ ] GitHub user set in the demo terminal: `export GITHUB_OWNER=<your-github-user>`. The commands use `$GITHUB_OWNER`, and `GITHUB_OWNER` in links and repo names below means the same user.
 - [ ] Reset done and preflight passes (all `OK`):
   ```sh
   demos/03-github-plugin/reset.sh "$GITHUB_OWNER"
@@ -35,9 +36,9 @@
 - [ ] Badge on the app's home page shows **4 available** (hard refresh, **Cmd+Shift+R**, about 1 minute after the reset).
 - [ ] Reset at least 1 hour before presenting, so the app's home page doesn't show the yellow "lightwell/badge had recent pushes" banner (see Part 4).
 - [ ] Browser tabs open:
-  - `https://github.com/OWNER/lightwell-demo-plugin/actions`
-  - `https://github.com/OWNER/lightwell-demo-payments-service` (README with the badge)
-  - `https://github.com/OWNER/lightwell-demo-payments-service/pulls`
+  - `https://github.com/GITHUB_OWNER/lightwell-demo-plugin/actions`
+  - `https://github.com/GITHUB_OWNER/lightwell-demo-payments-service` (README with the badge)
+  - `https://github.com/GITHUB_OWNER/lightwell-demo-payments-service/pulls`
 - [ ] Optional dry run the day before (Actions > Lightwell Remediate > Run workflow > dry_run checked): expect success, "Matches: 4", no PR.
 
 ---
@@ -92,13 +93,13 @@
 
 ## Part 2: Run the plugin (4 min)
 
-**Do:** plugin repo > Actions > **Lightwell Remediate** > **Run workflow** > target `OWNER/lightwell-demo-payments-service`, dry_run **unchecked** > Run.
+**Do:** plugin repo > Actions > **Lightwell Remediate** > **Run workflow** > target `GITHUB_OWNER/lightwell-demo-payments-service`, dry_run **unchecked** > Run.
 
 > "In production this runs on a schedule across all your apps. Here we start it by hand."
 
 **Show:** the run (about 1 minute): Select target repos > Remediate. Open the job summary.
 
-Expected: "Available library updates: 4", the Lightwell report (bumps with CVEs and CVSS), and "Opened or updated on OWNER/lightwell-demo-payments-service: <PR URL>".
+Expected: "Available library updates: 4", the Lightwell report (bumps with CVEs and CVSS), and "Opened or updated on GITHUB_OWNER/lightwell-demo-payments-service: <PR URL>".
 
 ---
 
@@ -181,8 +182,8 @@ It closes open PRs and deletes their branch, moves the app's `main` back to the 
 | Symptom | Fix |
 |---|---|
 | Run fails at "Require LIGHTWELL_REPO_TOKEN" | Secret missing or expired; set it again (see [setup.md](setup.md)) |
-| 403 or 404 checking out the app | Token not granted on `OWNER/lightwell-demo-payments-service`, or wrong target |
-| Run fails publishing the badge: `Permission to OWNER/lightwell-demo-payments-service.git denied` (403) | The token can't write to the app. Edit it: Repository access **Only select repositories** with the app repo, and **Contents: Read and write** |
+| 403 or 404 checking out the app | Token not granted on `GITHUB_OWNER/lightwell-demo-payments-service`, or wrong target |
+| Run fails publishing the badge: `Permission to GITHUB_OWNER/lightwell-demo-payments-service.git denied` (403) | The token can't write to the app. Edit it: Repository access **Only select repositories** with the app repo, and **Contents: Read and write** |
 | `pull request create failed: ... Resource not accessible by personal access token (createPullRequest)` | The token can't open PRs. Edit it: **Pull requests: Read and write** |
 | `could not add label: 'lightwell' not found` | The app repo has no `lightwell` label (repos created before the setup script made it). Run `gh label create lightwell -R "$GITHUB_OWNER/lightwell-demo-payments-service" --color 0E4429` |
 | No PR, "No Lightwell remediations available" | The app's `main` already has the Lightwell versions (a PR was merged); run `reset.sh` |

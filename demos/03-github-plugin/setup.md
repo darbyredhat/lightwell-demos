@@ -1,6 +1,6 @@
 # Demo 3 setup (once per presenter)
 
-You need a GitHub account and the GitHub CLI (`gh`). Run every command from the repo root. Set your GitHub user once per terminal with `export GITHUB_OWNER=<your-github-user>`; the commands use `$GITHUB_OWNER`, and `OWNER` in links and repo names below means the same user.
+You need a GitHub account and the GitHub CLI (`gh`). Run every command from the repo root. Set your GitHub user once per terminal with `export GITHUB_OWNER=<your-github-user>`; the commands use `$GITHUB_OWNER`, and `GITHUB_OWNER` in links and repo names below means the same user.
 
 ## 1. Log in to GitHub CLI
 
@@ -18,8 +18,8 @@ This creates two **public** repos under your account (new repos, not forks, so s
 
 | Repo | Contents |
 |---|---|
-| `OWNER/lightwell-demo-plugin` | A copy of [tools/lightwell-github-plugin](../../tools/lightwell-github-plugin/) |
-| `OWNER/lightwell-demo-payments-service` | A copy of [apps/payments-service](../../apps/payments-service/), tagged `demo-start` |
+| `GITHUB_OWNER/lightwell-demo-plugin` | A copy of [tools/lightwell-github-plugin](../../tools/lightwell-github-plugin/) |
+| `GITHUB_OWNER/lightwell-demo-payments-service` | A copy of [apps/payments-service](../../apps/payments-service/), tagged `demo-start` |
 
 The script replaces the `OWNER` placeholder in the workflows and README with your user. Pushing the app triggers **Build** and **Lightwell badge sync** once, which publishes the first badge ("4 available").
 
@@ -28,7 +28,7 @@ At the end it asks for the token (step 3). You can paste it then, or press Enter
 ## 3. Create the token and store it as a secret
 
 Create a **fine-grained personal access token** (GitHub > Settings > Developer settings > Fine-grained tokens):
-- **Repository access:** only `OWNER/lightwell-demo-payments-service`.
+- **Repository access:** only `GITHUB_OWNER/lightwell-demo-payments-service`.
 - **Permissions:** Contents: Read and write; Pull requests: Read and write.
 - **Expiration:** your choice (for example 30 days). Put a reminder in your calendar.
 
