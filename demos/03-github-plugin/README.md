@@ -20,7 +20,7 @@
 | 1. The setup | 3 min | Plugin repo, target app, one secret |
 | 2. Run the plugin | 4 min | Actions run: scan, CVE report, PR opened |
 | 3. The pull request | 5 min | CVE table, 4-line pom diff, CI builds the Lightwell versions and passes |
-| 4. Merge and badge | 2 min | Merge; badge sync updates the count |
+| 4. Merge, badge optional | 1-2 min | Merge; optionally, badge sync updates the count |
 | 5. Wrap-up | 1 min | Business value |
 
 ---
@@ -37,7 +37,7 @@
   demos/03-github-plugin/reset.sh "$GITHUB_OWNER"
   demos/03-github-plugin/preflight.sh "$GITHUB_OWNER"
   ```
-- [ ] Badge on the app's home page shows **4 available** (hard refresh, **Cmd+Shift+R**, about 1 minute after the reset).
+- [ ] Optional, if you'll show the badge in Part 4: badge on the app's home page shows **4 available** (hard refresh, **Cmd+Shift+R**, about 1 minute after the reset).
 - [ ] Reset at least 1 hour before presenting, so the app's home page doesn't show the yellow "lightwell/badge had recent pushes" banner (see Part 4).
 - [ ] Browser tabs open:
   - `https://github.com/GITHUB_OWNER/lightwell-demo-plugin/actions`
@@ -136,15 +136,21 @@ The table also lists json-path 2.7.0 as **Serviced at a different version** (`2.
 
 ---
 
-## Part 4: Merge and badge (2 min)
-
-**Show:** the app README badge: "Lightwell library updates: 4 available".
+## Part 4: Merge, badge optional (1-2 min)
 
 **Do:** merge the PR.
 
+> "A person reviewed the change, CI proved it builds, and it's merged."
+
+### Optional: the badge
+
+Skip this to avoid a 1-minute wait while the badge refreshes. If you show it:
+
+**Show (before merging):** the app README badge: "Lightwell library updates: 4 available".
+
 > "After merge, the app's badge sync workflow rescans and updates the count automatically."
 
-**Show:** Actions > **Lightwell badge sync** running on `main` (about 20 seconds). Then go to the app's home page, **wait about 1 minute**, and do a **hard refresh** (**Cmd+Shift+R**). A normal refresh keeps showing the old count, because shields.io and the browser cache the badge.
+**Show (after merging):** Actions > **Lightwell badge sync** running on `main` (about 20 seconds). Then go to the app's home page, **wait about 1 minute**, and do a **hard refresh** (**Cmd+Shift+R**). A normal refresh keeps showing the old count, because shields.io and the browser cache the badge.
 
 > While waiting: "The badge is an image served by shields.io, so it takes about a minute to catch up." Use the minute to recap the PR.
 
