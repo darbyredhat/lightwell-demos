@@ -24,6 +24,7 @@
 ## Before the demo
 
 - [ ] Repo on the latest known-good tag: `git fetch --tags && git checkout $(git tag -l 'demo-*' | tail -1)`.
+- [ ] JFrog variables loaded in the demo terminal, if Demo 2 follows in the same terminal: `artenv` (set up once in [Demo 2 setup.md](../02-artifactory-xray/setup.md)). Demo 1 itself doesn't use them.
 - [ ] Leftovers from a practice run cleared (the Reset command):
   ```sh
   rm -rf /tmp/lw-scan; find /tmp -maxdepth 1 -name 'lw-provenance.*' -exec rm -rf {} +

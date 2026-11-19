@@ -29,7 +29,7 @@ Credentials are only ever read from environment variables or prompted for withou
 |---|---|---|
 | `ART_URL` | Demo 2 | Your JFrog instance, for example `https://<your-instance>.jfrog.io` |
 | `ART_USER` | Demo 2 | Your JFrog user |
-| `ART_TOKEN` | Demo 2 | A JFrog access token (set with `read -rs ART_TOKEN && export ART_TOKEN`) |
+| `ART_TOKEN` | Demo 2 | A JFrog access token, stored in the macOS Keychain and loaded with `artenv` (see [Demo 2 setup.md](../demos/02-artifactory-xray/setup.md)) |
 | `LW_USER`, `TOKEN` | Demo 2 with `MODE=prod` only | Lightwell registry service account, for the production feeds |
 
 Demo 3's GitHub token goes straight into a repository secret (see [demos/03-github-plugin/setup.md](../demos/03-github-plugin/setup.md)).

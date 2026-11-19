@@ -5,12 +5,23 @@ You need a JFrog Platform instance with Artifactory and Xray (a JFrog cloud tria
 ## 1. Tools and login
 
 - Java 17, Maven, Python 3.10 or later, `curl` (see [docs/setup.md](../../docs/setup.md)).
-- Set your JFrog login in the terminal. Keep it in your shell; don't save it in a file in this repo:
-  ```sh
-  export ART_URL=https://<your-instance>.jfrog.io
-  export ART_USER=<your JFrog user>
-  read -rs ART_TOKEN && export ART_TOKEN     # paste an access token; nothing is echoed
-  ```
+- Store your JFrog login so any terminal can load it with one command, `artenv`. The token lives in the macOS Keychain, never in a file.
+  1. Save a JFrog access token in the Keychain. The command prompts for it, so it isn't echoed or saved in shell history:
+     ```sh
+     security add-generic-password -a "$USER" -s jfrog-art-token -w
+     ```
+  2. Add this function to `~/.zshrc`, with your instance and user, then open a new terminal:
+     ```sh
+     artenv() {
+       export ART_URL="https://<your-instance>.jfrog.io"
+       export ART_USER="<your-jfrog-user>"
+       export ART_TOKEN="$(security find-generic-password -a "$USER" -s jfrog-art-token -w)"
+       [ -n "$ART_TOKEN" ] && echo "JFrog variables loaded for $ART_URL" || echo "ART_TOKEN not found in the Keychain" >&2
+     }
+     ```
+  3. Run `artenv` in the demo terminal. The first time, macOS may ask to allow access to the Keychain item: click **Always Allow**.
+
+  To replace the token (for example, a new trial), run `security add-generic-password -U -a "$USER" -s jfrog-art-token -w`, and update `ART_URL` in `artenv` if the instance changed. Don't save the token in `~/.zshrc`, a file in this repo, or IDE terminal settings.
 - Install the Xray sync tool: see [tools/lightwell-xray-sync](../../tools/lightwell-xray-sync/README.md).
 
 ## 2. One-time setup on your instance

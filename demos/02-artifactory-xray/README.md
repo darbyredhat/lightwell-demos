@@ -21,7 +21,7 @@
 ## Before the demo
 
 - [ ] Repo on the latest known-good tag: `git fetch --tags && git checkout $(git tag -l 'demo-*' | tail -1)`.
-- [ ] JFrog variables set in the demo terminal (`ART_URL`, `ART_USER`, `ART_TOKEN`).
+- [ ] JFrog variables loaded in the demo terminal: `artenv` (sets `ART_URL`, `ART_USER`, `ART_TOKEN`; set up once in [setup.md](setup.md)).
 - [ ] Preflight passes (all `OK`):
   ```sh
   demos/02-artifactory-xray/preflight.sh
@@ -184,7 +184,7 @@ To remove everything from your instance when retiring the demo, see Teardown in 
 | Preflight `FAIL` on a JAR download | Repositories missing or wrong instance: check `ART_URL`, rerun `setup-repos.sh` (see [setup.md](setup.md)) |
 | Watch Violations shows 0 | Watch created after the JARs were scanned: run `demos/02-artifactory-xray/apply-watch.sh`, wait a few minutes |
 | Lightwell JAR still lists `XRAY-255585` under Security Issues | Ignore rules suppress violations, not scan issues. Show Watch Violations for the clean result |
-| Maven error mentions `${env.ART_URL}` or 401 | JFrog variables not set in this terminal: set `ART_URL`, `ART_USER`, `ART_TOKEN` |
+| Maven error mentions `${env.ART_URL}` or 401 | JFrog variables not set in this terminal: run `artenv` |
 | `The specified user settings file does not exist` | Run from the repo root |
 | The first build shows `6.0.3.rhlw-00001` instead of `6.0.3` | `pom.xml` not reset from the last run: run the Reset command |
 | `Could not find artifact ... in acmebank_java_repo` | `acmebank_java_repo` missing or its members wrong: rerun `setup-repos.sh` |
